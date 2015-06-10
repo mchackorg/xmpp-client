@@ -491,6 +491,38 @@ MainLoop:
 				}
 				s.timeouts[cookie] = time.Now().Add(5 * time.Second)
 				go s.awaitVersionReply(replyChan, cmd.User)
+			case queryCommand:
+				var online string
+				var verified string
+
+				// FIXME First check if cmd.User is in roster.
+
+				//Set input prompt. Need to find out if we have an ongoing OTR session to set the right prompt.
+				s.input.lastTarget = cmd.User
+				conv, ok := s.conversations[cmd.User]
+				isEncrypted := ok && conv.IsEncrypted()
+				s.input.SetPromptForTarget(cmd.User, isEncrypted)
+				//Is the user online?
+				state, ok := s.knownStates[cmd.User]
+				if ok {
+					online = "online " + state
+				} else {
+					online = "inactive, possibly offline"
+				}
+
+				if isEncrypted {
+					//Is the user's identity verified?
+					fpr :=  conv.TheirPublicKey.Fingerprint()
+					fprUid := s.config.UserIdForFingerprint(fpr)
+					if fprUid == cmd.User {
+						verified = "encrypted, verified"
+					} else {
+						verified = "encrypted, NOT verified"
+					}
+				}
+
+				line := "Now talking to " + cmd.User + " " + online + " " + verified
+				info(s.term, line)
 			case rosterCommand:
 				info(s.term, "Current roster:")
 				maxLen := 0
