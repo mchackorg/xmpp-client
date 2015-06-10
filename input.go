@@ -40,6 +40,7 @@ var uiCommands = []uiCommand{
 	{"roster", rosterCommand{}, "Display the current roster"},
 	{"statusupdates", toggleStatusUpdatesCommand{}, "Toggle if status updates are displayed"},
 	{"version", versionCommand{}, "Ask a Jabber client for its version"},
+	{"whois", whoisCommand{}, "List known info about user"},
 	{"xa", xaCommand{}, "Set your status to Extended Away"},
 }
 
@@ -114,6 +115,10 @@ type rosterEditDoneCommand struct{}
 type toggleStatusUpdatesCommand struct{}
 
 type versionCommand struct {
+	User string "uid"
+}
+
+type whoisCommand struct {
 	User string "uid"
 }
 
