@@ -25,6 +25,7 @@ var uiCommands = []uiCommand{
 	{"deny", denyCommand{}, "Deny an inbound subscription request"},
 	{"dnd", dndCommand{}, "Set your status to Busy / Do Not Disturb"},
 	{"help", helpCommand{}, "List known commands"},
+	{"m", queryCommand{}, "Set default recipient"},			
 	{"nopaste", noPasteCommand{}, "Stop interpreting text verbatim"},
 	{"online", onlineCommand{}, "Set your status to Available / Online"},
 	{"otr-auth", authCommand{}, "Authenticate a secure peer with a mutual, shared secret"},
@@ -104,6 +105,11 @@ type otrCommand struct {
 type otrInfoCommand struct{}
 
 type pasteCommand struct{}
+
+type queryCommand struct {
+	User string "uid"
+}
+
 type quitCommand struct{}
 
 type rosterCommand struct {
