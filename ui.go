@@ -491,6 +491,18 @@ MainLoop:
 				}
 				s.timeouts[cookie] = time.Now().Add(5 * time.Second)
 				go s.awaitVersionReply(replyChan, cmd.User)
+			case whoCommand:
+				info(s.term, "Currently online:")
+				for _, item := range s.roster {
+					state, ok := s.knownStates[item.Jid]
+
+					if ok {
+						line := ""
+						line += item.Jid
+						line += " " + state
+						info(s.term, line)
+					}
+				}
 			case rosterCommand:
 				info(s.term, "Current roster:")
 				maxLen := 0
@@ -970,9 +982,11 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) {
 		}
 		delete(s.knownStates, from)
 	} else {
-		if _, ok := s.knownStates[from]; !ok && isAwayStatus(stanza.Show) {
-			// Skip people who are initially away.
-			return
+		if !s.config.InitialAwayIsOnline {
+			if _, ok := s.knownStates[from]; !ok && isAwayStatus(stanza.Show) {
+				// Skip people who are initially away.
+				return
+			}
 		}
 
 		if lastState, ok := s.knownStates[from]; ok && lastState == stanza.Show {

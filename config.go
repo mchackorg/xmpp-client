@@ -38,6 +38,7 @@ type Config struct {
 	ServerCertificateSHA256       string   `json:",omitempty"`
 	AlwaysEncrypt                 bool     `json:",omitempty"`
 	AlwaysEncryptWith             []string `json:",omitempty"`
+	InitialAwayIsOnline           bool
 }
 
 type KnownFingerprint struct {
