@@ -535,6 +535,34 @@ MainLoop:
 
 				line := "Now talking to " + cmd.User + " " + online + " " + verified
 				info(s.term, line)
+			case whoisCommand:
+				line := ""
+				line += cmd.User
+				state, ok := s.knownStates[cmd.User]
+				if ok {
+					line += " online"
+					if state != "" {
+						line += ", status: " + state
+					}
+				} else {
+					line += " offline"
+				}
+				info(s.term, line)
+
+				conv := s.conversations[cmd.User]
+				line = ""
+				if conv != nil && conv.IsEncrypted() {
+					line += "Encrypted session"
+					fpr := conv.TheirPublicKey.Fingerprint()
+					fprUid := s.config.UserIdForFingerprint(fpr)
+					if fprUid == cmd.User {
+						line += ", verified identity"
+					} else {
+						line += ", identity NOT verified"
+					}
+
+					info(s.term, line)
+				}
 			case rosterCommand:
 				info(s.term, "Current roster:")
 				maxLen := 0
